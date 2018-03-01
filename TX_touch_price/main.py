@@ -73,8 +73,8 @@ def check_price(url,vartime,price,mail_times):
 def setting_price():
 	##TODO價格相等就寄信
 	while(1):
-		low_price = input("低價位：")
-		high_price = input("高價位：")
+		low_price = input("低價位(low price)：")
+		high_price = input("高價位(high price)：")
 		if low_price.isnumeric() and high_price.isnumeric():
 			price=[float(low_price),float(high_price)]
 			break;
