@@ -7,7 +7,7 @@ There are three variables in the abc file
 sender_gmail_account,sender_gmail_password,recipient_gmail_account
 '''
 
-def test(price):
+def reminder_mail(price):
 	message = MIMEText('已到'+price, 'plain', 'utf-8')
 	message['From'] = Header("Robot停損", 'utf-8')
 	message['To'] =  Header("收信者", 'utf-8')

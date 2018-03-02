@@ -10,11 +10,16 @@ def main():
 	url=init_parm()
 	#Every 5 secs check
 	while 1:
+		
 		vartime=time.localtime()
 		url=check_regular_or_after_hour(url,vartime)
-		mail_times=check_price(url,vartime,price,mail_times,mail_times_max)
+		try:
+			mail_times=check_price(url,vartime,price,mail_times,mail_times_max)
+		except KeyboardInterrupt:
+			print("Stop")
+		except IndexError and TypeError:
+			print("IndexError or TypeError")
 		time.sleep(1)
-
 
 def init_parm():
 
@@ -46,12 +51,12 @@ def check_price(url,vartime,price,mail_times,mail_times_max):
 	## 寄信
 	if float(df)<=price[0] and mail_times<mail_times_max:
 		print("觸低價")
-		mail.test(str(price[0]))
+		mail.reminder_mail(str(price[0]))
 		mail_times+=1
 		music.warning_notice()
 	if float(df)>=price[1] and mail_times<mail_times_max:
 		print("觸高價")
-		mail.test(str(price[1]))
+		mail.reminder_mail(str(price[1]))
 		mail_times+=1
 		music.warning_notice()
 	return mail_times
