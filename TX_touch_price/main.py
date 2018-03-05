@@ -19,6 +19,10 @@ def main():
 			print("Stop")
 		except IndexError and TypeError:
 			print("IndexError or TypeError")
+		except ConnectionError:
+			print("ConnectionError")
+		except:
+			print("Some Error")
 		time.sleep(1)
 
 def init_parm():
