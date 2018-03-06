@@ -9,28 +9,32 @@ def main():
 
 	#Every 5 secs check
 	while 1:
-		
+		time.sleep(1)
 		vartime=time.localtime()
 		url=check_url()
+		if not url: 
+			print('睡覺')
+			continue
 		try:
 			mail_times=check_price(url,vartime,price,mail_times,mail_times_max)
 		except KeyboardInterrupt:
 			print("Stop")
-		except IndexError and TypeError:
+		except (IndexError,TypeError):
 			print("IndexError or TypeError")
 		except ConnectionError:
 			print("ConnectionError")
 		except:
 			print("Some Error")
-		time.sleep(1)
-
 def check_url():
 
 	if ((time.localtime().tm_hour*60+time.localtime().tm_min>=8*60+45) and 
 		(time.localtime().tm_hour*60+time.localtime().tm_min<=13*60+45)):
 		url=url1
-	else:
+	elif((time.localtime().tm_hour*60+time.localtime().tm_min>=15*60) or
+		(time.localtime().tm_hour*60+time.localtime().tm_min<=5*60)):
 		url=url2
+	else :
+		url=''
 	return url
 
 def check_price(url,vartime,price,mail_times,mail_times_max):
