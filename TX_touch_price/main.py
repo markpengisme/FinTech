@@ -6,13 +6,12 @@ url2="http://info512ah.taifex.com.tw/Future/FusaQuote_Norl.aspx"
 def main():
 	price=setting_price()
 	mail_times_max,mail_times=setting_mailtimes()
-	#init
-	url=init_parm()
+
 	#Every 5 secs check
 	while 1:
 		
 		vartime=time.localtime()
-		url=check_regular_or_after_hour(url,vartime)
+		url=check_url()
 		try:
 			mail_times=check_price(url,vartime,price,mail_times,mail_times_max)
 		except KeyboardInterrupt:
@@ -25,26 +24,13 @@ def main():
 			print("Some Error")
 		time.sleep(1)
 
-def init_parm():
+def check_url():
 
 	if ((time.localtime().tm_hour*60+time.localtime().tm_min>=8*60+45) and 
 		(time.localtime().tm_hour*60+time.localtime().tm_min<=13*60+45)):
 		url=url1
 	else:
 		url=url2
-	return url
-
-def check_regular_or_after_hour(url,vartime):
-	'''
-		Check contract is day or night
-	'''
-		
-	if vartime.tm_hour==8 and vartime.tm_min==45 and vartime.tm_sec==0:
-		url=url1
-	
-	if vartime.tm_hour==15 and vartime.tm_min==0 and vartime.tm_sec==0:	
-		url=url2
-
 	return url
 
 def check_price(url,vartime,price,mail_times,mail_times_max):
