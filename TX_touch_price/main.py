@@ -6,7 +6,7 @@ url2="http://info512ah.taifex.com.tw/Future/FusaQuote_Norl.aspx"
 def main():
 	price=setting_price()
 	mail_times_max,mail_times=setting_mailtimes()
-
+	music_control=setting_music()
 	#Every 5 secs check
 	while 1:
 		time.sleep(1)
@@ -16,7 +16,7 @@ def main():
 			print('睡覺')
 			continue
 		try:
-			mail_times=check_price(url,vartime,price,mail_times,mail_times_max)
+			mail_times=check_price(url,vartime,price,mail_times,mail_times_max,music_control)
 		except KeyboardInterrupt:
 			print("Stop")
 		except (IndexError,TypeError):
@@ -37,7 +37,7 @@ def check_url():
 		url=''
 	return url
 
-def check_price(url,vartime,price,mail_times,mail_times_max):
+def check_price(url,vartime,price,mail_times,mail_times_max,music_control):
 	res=requests.post(url)
 	res.encoding='utf-8'
 	df=pandas.read_html(res.text, attrs={'class':'custDataGrid'})[0].iloc[2][2]
@@ -47,12 +47,12 @@ def check_price(url,vartime,price,mail_times,mail_times_max):
 		print("觸低價")
 		mail.reminder_mail(str(price[0]))
 		mail_times+=1
-		music.warning_notice()
+		music.warning_notice(music_control)
 	if float(df)>=price[1] and mail_times<mail_times_max:
 		print("觸高價")
 		mail.reminder_mail(str(price[1]))
 		mail_times+=1
-		music.warning_notice()
+		music.warning_notice(music_control)
 	return mail_times
 
 def setting_price():
@@ -73,6 +73,16 @@ def setting_mailtimes():
 			break;
 		print("輸入錯誤，請重新輸入")
 	return int(mail_times_max),0
+
+def setting_music():
+	while(1):
+		music_control = input("觸價是否播音樂:(y/n)")
+		if music_control=='y':
+			return 1
+		elif music_control=='n':
+			return 0
+		else:
+			print("輸入錯誤，請重新輸入")
 
 
 
