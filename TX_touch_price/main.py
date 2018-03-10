@@ -1,4 +1,4 @@
-import requests, pandas, csv, time, datetime,os
+import requests, pandas, csv, time
 import mail,music
 url1="http://info512.taifex.com.tw/Future/FusaQuote_Norl.aspx"
 url2="http://info512ah.taifex.com.tw/Future/FusaQuote_Norl.aspx"
@@ -26,8 +26,10 @@ def main():
 		except:
 			print("Some Error")
 def check_url():
-
-	if ((time.localtime().tm_hour*60+time.localtime().tm_min>=8*60+45) and 
+	if time.localtime().tm_wday==5 and time.localtime().tm_hour==5 :
+		print('週末睡兩天')
+		time.sleep(86400*2)		
+	elif ((time.localtime().tm_hour*60+time.localtime().tm_min>=8*60+45) and 
 		(time.localtime().tm_hour*60+time.localtime().tm_min<=13*60+45)):
 		url=url1
 	elif((time.localtime().tm_hour*60+time.localtime().tm_min>=15*60) or
