@@ -4,5 +4,5 @@
 1. Open setup_copy.py,and fill your sender's email and recipient's email.
 2. Rename setup_copy.py to setup.py.
 2. python main.py in command line.
-3. Setting low price,high price and max mail times.
+3. Setting low price, high price, max mail times, enable play song feature(for Mac).
 4. If touched, it will send mail and play touch_price.mp3.
