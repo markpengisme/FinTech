@@ -77,10 +77,10 @@ def setting_entry():
 		if toggle=='y':
 			while(1):
 				entry_price = input("進場價格：")
-				position = input("多空(1/0):")
+				position = input("多空(1/-1):")
 				lot = input("口數(預設標的為小台，大台請*4)：")
-				if entry_price.isnumeric() and (position=='0' or 
-					position=='1') and lot.isnumeric():
+				if entry_price.isnumeric() and (position=='1' or 
+					position=='-1') and lot.isnumeric():
 					entry={
 					'toggle':toggle,
 					'entry_price':entry_price,
