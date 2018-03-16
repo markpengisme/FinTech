@@ -28,8 +28,8 @@ def main():
 			print("IndexError or TypeError")
 		except ConnectionError:
 			print("ConnectionError")
-		# except:
-		# 	print("Some Error")
+		except:
+		 	print("Some Error")
 def check_url():
 	if time.localtime().tm_wday==5 and time.localtime().tm_hour==5 :
 		print('週末睡兩天')
