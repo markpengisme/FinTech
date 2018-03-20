@@ -33,7 +33,10 @@ def main():
 def check_url():
 	if time.localtime().tm_wday==5 and time.localtime().tm_hour==5 :
 		print('週末睡兩天')
-		time.sleep(86400*2)		
+		while(1):
+			if time.localtime().tm_wday==7 and time.localtime().tm_hour==5 :
+				time.sleep(60)
+				break;
 	elif ((time.localtime().tm_hour*60+time.localtime().tm_min>=8*60+45) and 
 		(time.localtime().tm_hour*60+time.localtime().tm_min<=13*60+45)):
 		url=url1
