@@ -110,8 +110,8 @@ def setting_entry():
 
 def setting_price():
 	while(1):
-		low_price = input("低價位：")
-		high_price = input("高價位：")
+		low_price = input("低價位(預設1)：") or '1'
+		high_price = input("高價位(預設100000)：") or '100000'
 		if low_price.isnumeric() and high_price.isnumeric():
 			price=[float(low_price),float(high_price)]
 			break;
@@ -120,7 +120,7 @@ def setting_price():
 
 def setting_mail_times_max():
 	while(1):
-		mail_times_max = input("最多寄幾次信：")
+		mail_times_max = input("最多寄幾次信(預設10次)：") or '10'
 		if mail_times_max.isnumeric() :
 			break;
 		print("輸入錯誤，請重新輸入")
@@ -128,7 +128,7 @@ def setting_mail_times_max():
 
 def setting_music():
 	while(1):
-		music_control = input("觸價是否播音樂(y/n)：")
+		music_control = input("觸價是否播音樂(y/n，預設n)：") or 'n'
 		if music_control=='y':
 			return 1
 		elif music_control=='n':
