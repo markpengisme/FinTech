@@ -7,6 +7,9 @@ url2="http://info512ah.taifex.com.tw/Future/FusaQuote_Norl.aspx"
 ##TODO(1):line(13) beauty
 
 def main():
+	'''
+		setting entry,price,mail,music from function
+	'''
 
 	entry=setting_entry()
 	price=setting_price()
@@ -14,6 +17,10 @@ def main():
 	music_control=setting_music()
 	#Every 5 secs check
 	while 1:
+		'''
+			crawl and check price
+		'''
+
 		time.sleep(1)
 		vartime=time.localtime()
 		url=check_url()
@@ -31,12 +38,16 @@ def main():
 		except:
 		 	print("Some Error")
 def check_url():
+	'''
+		check time to change url or sleep
+	'''
+
 	if time.localtime().tm_wday==5 and time.localtime().tm_hour==5 :
 		print('週末睡兩天')
 		while(1):
+			time.sleep(60)
 			if time.localtime().tm_wday==7 and time.localtime().tm_hour==5 :
-				time.sleep(60)
-				break;
+				break
 	elif ((time.localtime().tm_hour*60+time.localtime().tm_min>=8*60+45) and 
 		(time.localtime().tm_hour*60+time.localtime().tm_min<=13*60+45)):
 		url=url1
@@ -48,10 +59,15 @@ def check_url():
 	return url
 
 def check_price(url,vartime,entry,price,mail_control,music_control):
+	'''
+		crawl price and caculate profit 
+		if touch price , send mail
+	'''
 	res=requests.post(url)
 	res.encoding='utf-8'
 	df=pandas.read_html(res.text, attrs={'class':'custDataGrid'})[0].iloc[2][2]
 
+	##crawl price
 	if(entry['toggle']=='y'):
 		profit=str((float(df)-float(entry['entry_price']))*float(entry['position'])*float(entry['lot'])*50)
 		print(time.strftime('%Y/%m/%d %H:%M:%S',vartime)+'\t即時報價'+df+'\t損益金額'+profit+'元')
@@ -59,7 +75,7 @@ def check_price(url,vartime,entry,price,mail_control,music_control):
 	else:
 		print(time.strftime('%Y/%m/%d %H:%M:%S',vartime)+'\t即時報價'+df)
 
-	## 寄信
+	##send mail	
 	if float(df)<=price[0] and mail_control['mail_times']<mail_control['mail_times_max']:
 		print("觸低價")
 		mail.reminder_mail(str(price[0]))
@@ -75,6 +91,10 @@ def check_price(url,vartime,entry,price,mail_control,music_control):
 	return mail_control
 
 def setting_entry():
+	'''
+		setting profit feautre,
+		if open ,then setting entry_price,postion,lot
+	'''
 	while(1):
 		toggle = input("是否開啟損益模式(y/n):")
 		if toggle=='y':
@@ -109,6 +129,9 @@ def setting_entry():
 
 
 def setting_price():
+	'''
+		setting low price, hight price
+	'''
 	while(1):
 		low_price = input("低價位(預設1)：") or '1'
 		high_price = input("高價位(預設100000)：") or '100000'
@@ -119,6 +142,9 @@ def setting_price():
 	return price
 
 def setting_mail_times_max():
+	'''
+		setting mail times
+	'''
 	while(1):
 		mail_times_max = input("最多寄幾次信(預設10次)：") or '10'
 		if mail_times_max.isnumeric() :
@@ -127,6 +153,9 @@ def setting_mail_times_max():
 	return int(mail_times_max)
 
 def setting_music():
+	'''
+		setting music feature
+	'''
 	while(1):
 		music_control = input("觸價是否播音樂(y/n，預設n)：") or 'n'
 		if music_control=='y':
