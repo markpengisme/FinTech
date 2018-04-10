@@ -11,7 +11,7 @@ def reminder_mail(price):
 	message = MIMEText('已到'+price, 'plain', 'utf-8')
 	message['From'] = Header("Robot停損", 'utf-8')
 	message['To'] =  Header("收信者", 'utf-8')
-	subject = '停損通知'
+	subject = '觸價通知'
 	message['Subject'] = Header(subject, 'utf-8')
 	try:
 		smtpObj = smtplib.SMTP('smtp.gmail.com', 587)

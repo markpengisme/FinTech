@@ -4,8 +4,6 @@ url1="http://info512.taifex.com.tw/Future/FusaQuote_Norl.aspx"
 url2="http://info512ah.taifex.com.tw/Future/FusaQuote_Norl.aspx"
 
 
-##TODO(1):line(13) beauty
-
 def main():
 	'''
 		setting entry,price,mail,music from function
@@ -159,9 +157,10 @@ def setting_music():
 	while(1):
 		music_control = input("觸價是否播音樂(y/n，預設n)：") or 'n'
 		if music_control=='y':
-			return 1
+			music_choice= input("觸價音樂1~2(1.語音\t2.音樂)：") or '1'
+			return music_choice
 		elif music_control=='n':
-			return 0
+			return '0'
 		else:
 			print("輸入錯誤，請重新輸入")
 
