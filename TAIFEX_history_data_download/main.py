@@ -1,113 +1,140 @@
 from bs4 import BeautifulSoup
 import requests,pandas,os,csv
-import datetime
+import datetime, dateutil
+
 '''
 TODILIST(1):註解
-TODILIST(2):分割function
 '''
-def legal_person(futures_type):
+
+
+def download_report(url, data, export_csv, method = 'w'):
+    print(data)
+    res = requests.post(url,data=data)
+    res.encoding='Big5'
+    try:
+        if "HTML" not in res.text:
+            with open("downloads/" + export_csv, method) as f:
+                f.write(res.text)
+        else:
+            raise Exception()
+        print("寫檔完成\n")
+    except Exception as e:
+        print(e)
+        print("寫檔錯誤\n")
+
+def legal_person(commodity_type):
     while(1):
         print("輸入兩次空白為離開")
-        start = input("請輸入開始年月日(YYYYMMDD):")
-        end = input("請輸入結束年月日(YYYYMMDD):")
+        start = input("請輸入開始年月日(YYYY/MM/DD):")
+        end = input("請輸入結束年月日(YYYY/MM/DD):")
         try:
-
-            date_start = datetime.datetime(int(start[0:4]),int(start[4:6]),int(start[6:8]))
-            date_end = datetime.datetime(int(end[0:4]),int(end[4:6]),int(end[6:8]))
-            today=datetime.datetime.today()
+            date_start = datetime.datetime(int(start[0:4]),int(start[5:7]),int(start[8:10]))
+            date_end = datetime.datetime(int(end[0:4]),int(end[5:7]),int(end[8:10]))
+            today = datetime.datetime.today()
             three_years_ago=today.replace(year=today.year-3,day=today.day-1)
         except:
             if start=="" and end=="":
                 return
             print("日期輸入錯誤，請重新輸入")
             continue
-        if(date_start<three_years_ago or date_end>today):
+        if date_start < three_years_ago or date_end > today:
             print("!!結束入期不能超過今天\n!!只能下載3年內的資料")
-        elif date_start>date_end :
+        elif date_start > date_end :
             print("開始日期大於結束日期，請重新輸入")
         else:
             break
 
-    
-    if futures_type=="TXF" or futures_type=="MXF":
-        url="http://www.taifex.com.tw/chinese/3/7_12_8dl.asp"
-    elif futures_type=="TXO":
-        url="http://www.taifex.com.tw/chinese/3/7_12_10dl.asp"
+    if commodity_type=="TXF":
+        url={"TXF": "https://www.taifex.com.tw/cht/3/futContractsDateDown"}
+    elif commodity_type=="MXF":
+        url={"MXF": "https://www.taifex.com.tw/cht/3/futContractsDateDown"}
+    elif commodity_type=="TXO":
+        url={"TXO": "https://www.taifex.com.tw/cht/3/optContractsDateDown"}
+    elif commodity_type=="all":
+        urls={"future":"https://www.taifex.com.tw/cht/3/futContractsDateDown",
+              "option":"https://www.taifex.com.tw/cht/3/optContractsDateDown"}
     else:
         print('url error')
         return
 
-    #data_test={'syear':'2018','smonth':'4','sday':'18','eyear':'2018','emonth':'4','eday':'18','COMMODITY_ID':'TXF'}
-    data={'syear':date_start.year,'smonth':date_start.month,'sday':date_start.day,
-           'eyear':date_end.year,'emonth':date_end.month,'eday':date_end.day,
-           'COMMODITY_ID':futures_type}
-    res=requests.post(url,data=data)
-    res.encoding='Big5'
-    export_csv=futures_type+"_三大法人("+start+"~"+end+").csv"
-    with open(export_csv, 'w') as f:
-        f.write(res.text)
-    print("寫檔完成\n")
 
-def dayily_report(futures_type):
+    for type_name, url in urls.items():
+        data = {'queryStartDate': start,
+                'queryEndDate': end,
+                'commodityId': commodity_type}
+        if data["commodityId"] == "all":
+            del data["commodityId"]
+        export_csv= type_name + "_三大法人(" + \
+                    start.replace("/", "") + "~" + \
+                    end.replace("/", "") + ").csv"
+        download_report(url, data, export_csv)
+       
+def dayily_report(commodity_type):
     while(1):
         print("輸入兩次空白為離開")
-        start = input("請輸入開始年月日(YYYYMMDD)，最早為19980801:")
-        end = input("請輸入結束年月日(YYYYMMDD)，最晚為今天:")
+        start = input("請輸入開始年月日(YYYY/MM/DD)，最早為1998/08/01: ")
+        end = input("請輸入結束年月日(YYYY/MM/DD)，最晚為今天: ")
         try:
-            date_start = datetime.datetime(int(start[0:4]),int(start[4:6]),int(start[6:8]))
-            date_end = datetime.datetime(int(end[0:4]),int(end[4:6]),int(end[6:8]))
+            date_start = datetime.datetime(int(start[0:4]),int(start[5:7]),int(start[8:10]))
+            date_end = datetime.datetime(int(end[0:4]),int(end[5:7]),int(end[8:10]))
             today=datetime.datetime.today()
             earliest=datetime.datetime(1998,8,1)
         except:
-            if start=="" and end=="":
+            if start == "" and end == "":
                 return
             print("日期輸入錯誤，請重新輸入")
             continue
-        if(date_start<earliest or date_end>today):
+        if date_start < earliest or date_end > today:
             print("!!結束入期不能超過今天\n!!只能下載1998/08/01以後")
-        elif date_start>date_end :
+        elif date_start > date_end :
             print("開始日期大於結束日期，請重新輸入")
         else:
             break
 
-    
-    if futures_type=="TX" or futures_type=="MTX":
-        url="http://www.taifex.com.tw/chinese/3/3_1_2dl.asp"
-    elif futures_type=="TXO":
-        url="http://www.taifex.com.tw/chinese/3/3_2_3_b.asp"
+    if commodity_type=="TX":
+        urls={"TX": "https://www.taifex.com.tw/cht/3/futDataDown"}
+    elif commodity_type=="MTX":
+        urls={"MTX": "https://www.taifex.com.tw/cht/3/futDataDown"}
+    elif commodity_type=="TXO":
+        urls={"TXO": "https://www.taifex.com.tw/cht/3/optDataDown"}
+    elif commodity_type=="all":
+        urls={"future": "https://www.taifex.com.tw/cht/3/futDataDown",
+              "option": "https://www.taifex.com.tw/cht/3/optDataDown"}
     else:
         print('url error')
         return
     
-    export_csv=futures_type+"_每日交易行情("+start+"~"+end+").csv"
-    with open(export_csv,'w') as f:
-        pass
-        
-    
-    while True:
-        data={'DATA_DATE' :date_start.strftime("%Y/%m/%d"),
-              'DATA_DATE1' :date_start.strftime("%Y/%m/%d"),
-              'datestart': date_start.strftime("%Y/%m/%d"),
-              'dateend': date_start.strftime("%Y/%m/%d"),
-              'COMMODITY_ID':futures_type}
-        diff=date_end-date_start
-        if diff.days<0:
-            break
-        else:
-            date_start=date_start+datetime.timedelta(days=1)
-        try:
-            print("還剩"+str(diff.days)+"天")
-            res=requests.post(url,data=data)
-            res.encoding='big5'
-            if "HTML"  not in res.text:
-                with open(export_csv, 'a') as f:
-                    f.write(res.text)  
-        except:
-            print("寫檔錯誤")
-             
-    print("寫檔完成\n")
-    
+    ds = date_start
+    for type_name, url in urls.items():
+        date_start = ds
+        export_csv = type_name + "_每日交易行情(" + \
+            start.replace("/", "") + "~" + \
+            end.replace("/", "") + ").csv"
 
+        data = {'down_type': 1,
+                'commodity_id': commodity_type}
+
+        with open("downloads/" + export_csv,'w') as f:
+            pass
+        
+        while True:
+            nm = date_start + datetime.timedelta(days=28)
+            if nm < date_end:
+                data['queryStartDate'] = date_start.strftime("%Y/%m/%d")
+                data['queryEndDate'] = nm.strftime("%Y/%m/%d")
+                download_report(url, data, export_csv, 'a')
+                date_start = nm + datetime.timedelta(days=1)
+            elif nm > date_end:
+                nm = date_end
+                data['queryStartDate'] = date_start.strftime("%Y/%m/%d")
+                data['queryEndDate'] = nm.strftime("%Y/%m/%d")
+                download_report(url, data, export_csv, 'a')
+                break
+            else:
+                break
+
+
+   
 
     
 if __name__ == '__main__':
@@ -138,5 +165,8 @@ if __name__ == '__main__':
             dayily_report("MTX")
         elif feature=='6':
             dayily_report("TXO")
+        elif feature=='7':
+            legal_person("all")
+            dayily_report("all")
         else:
             print("輸入錯誤，請輸入0~6")
